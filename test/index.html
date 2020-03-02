@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+<head>
+  <title>Test</title>
+  <script src="../dist/ne14_pop.umd.min.js"></script>
+  <script>(function () {
+
+    window.addEventListener('load', function() {
+
+      var button = document.getElementsByTagName('button')[0];
+      var popup = document.getElementsByTagName('ne14-pop')[0];
+      button.addEventListener('click', function() {
+        popup.open();
+      });
+    });
+
+  })();</script>
+</head>
+<body>
+  <h1>Lorem Ipsum</h1>
+  <button>Open</button>
+  <ne14-pop>
+    <p>Some text-here</p>
+  </ne14-pop>
+</body>
+</html>
