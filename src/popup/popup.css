@@ -24,3 +24,7 @@
 .back.open .fore {
   transform: translate(-50%, -50%);
 }
+.title { background: gainsboro; }
+.title:empty {
+  display: none;
+}
