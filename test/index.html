@@ -9,7 +9,31 @@
 
       var button = document.getElementsByTagName('button')[0];
       var popup = document.getElementsByTagName('ne14-pop')[0];
+
+      /* 
+        Supported Events:
+          open
+          close
+      */
+      popup.addEventListener('close', () => console.log('close'));
+      popup.addEventListener('open', () => console.log('open'));
+
       button.addEventListener('click', function() {
+
+        /*
+          Supported Methods:
+            open()
+            close()
+            wrap()
+            confirm()
+            dismiss()
+        */
+       /*
+          Supported Properties:
+            *title: string [get|set] - Sets the popup title (dynamically)
+            confirmText: string [get|set] - Sets confirm button (dynamically)
+            dismissText: string [get|set] - Sets dismiss button (dynamically)
+        */
         popup.open();
       });
     });
@@ -19,7 +43,16 @@
 <body>
   <h1>Lorem Ipsum</h1>
   <button>Open</button>
-  <ne14-pop title="woot-title!" style="border-radius: 7px;">
+  <!-- 
+    Supported Attributes: 
+      *style - Some (inline) styles are injected: border-radius, background-color
+      *title - Used as the popup title, if specified
+      confirm-text - If provided, a confirm button is added (value or 'OK')
+      dismiss-text - If provided, a dismiss button is added (value or 'Cancel')
+      confirmCallback - If returns === false, prevents popup close on confirm
+      dismissCallback - If returns === false, prevents popup close on dismiss
+    -->
+  <ne14-pop title="woot-title!" dismiss-text>
     <p>Some text-here</p>
   </ne14-pop>
 </body>

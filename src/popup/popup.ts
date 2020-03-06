@@ -5,7 +5,7 @@ import stylesUrl from './popup.css';
 
 export class Popup extends CustomElementBase {
 
-  public static readonly observedAttributes = ['open', 'style'];
+  public static readonly observedAttributes = ['open', 'style', 'title', 'confirm-text', 'dismiss-text'];
 
   private static readonly STYLE_KEYS = [ 
     'backgroundColor',
@@ -25,6 +25,18 @@ export class Popup extends CustomElementBase {
 
     fore.addEventListener('click', event => event.stopPropagation());
     backing.addEventListener('click', () => this.close());
+  }
+
+  public get confirmText(): string { return this.getAttribute('confirm-text'); }
+  public set confirmText(value: string) {
+    if (value == null) this.removeAttribute('confirm-text');
+    else this.setAttribute('confirm-text', value);
+  }
+
+  public get dismissText(): string { return this.getAttribute('dismiss-text'); }
+  public set dismissText(value: string) {
+    if (value == null) this.removeAttribute('dismiss-text');
+    else this.setAttribute('dismiss-text', value);
   }
 
   close() {
@@ -47,21 +59,34 @@ export class Popup extends CustomElementBase {
       case 'open':
         const backing = this.root.querySelector('.back');
         const doOpen = !!newValue || typeof newValue === 'string';
-        this.root.querySelector('.title').innerHTML = this.title;
         if (doOpen) this.propagateSupportedStyles(backing as HTMLElement);
         backing.classList.toggle('open', doOpen);
+        this.fire(doOpen ? 'open' : 'close');
         break;
       case 'style':
         if (newValue) {
           Popup.STYLE_KEYS
             .map(key => ({key, value: (this.style as any)[key]}))
             .filter(kvp => kvp.value)
-            .forEach(kvp => { 
-              this._styles[kvp.key] = kvp.value;
-              console.log(`om nom nom. ${kvp.key} tastes like '${kvp.value}'`);
-            });
+            .forEach(kvp => this._styles[kvp.key] = kvp.value);
           this.removeAttribute('style');
         }
+        break;
+      case 'title':
+        if (newValue === '__clearme__') {
+          this.removeAttribute('title');          
+        } else if (oldValue !== '__clearme__') {
+          this.root.querySelector('.title').innerHTML = newValue;
+          if (!newValue) this.setAttribute('title', '__clearme__');
+        }
+        break;
+      case 'confirm-text':
+        const confirmText = newValue == null ? '' : newValue || 'OK';
+        this.root.querySelector('button.confirm').innerHTML = confirmText;
+        break;  
+      case 'dismiss-text':
+        const dismissText = newValue == null ? '' : newValue || 'Cancel';
+        this.root.querySelector('button.dismiss').innerHTML = dismissText;
         break;
     }
   }
@@ -88,5 +113,10 @@ export class Popup extends CustomElementBase {
     ['borderTopLeftRadius', 'borderTopRightRadius'].forEach(prop => {
       (title.style as any)[prop] = this._styles[prop];
     });
+  }
+
+  /** Emits an event from the specified node. */
+  private fire<T>(event: string, detail?: T) {
+    this.dispatchEvent(new CustomEvent(event, { detail }));
   }
 }

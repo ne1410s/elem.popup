@@ -6,12 +6,9 @@
   transition: opacity .3s;
   z-index: 99999;
 }
-.back:not(.open) {
-  pointer-events: none;
-}
-.back.open {
-  opacity: 1;
-}
+.back:not(.open) { pointer-events: none; }
+.back.open { opacity: 1; }
+.back.open .fore { transform: translate(-50%, -50%); }
 .fore {
   background-color: #fff;
   min-width: 1rem;
@@ -21,10 +18,9 @@
   transform: translate(-50%, -100vh);
   transition: transform .3s;
 }
-.back.open .fore {
-  transform: translate(-50%, -50%);
-}
-.title { background: gainsboro; }
-.title:empty {
-  display: none;
+.title:empty, .confirm:empty, .dismiss:empty { display: none; }
+.title {
+  display: block;
+  background: gainsboro; 
+  padding: 0.5em;
 }
