@@ -2,6 +2,11 @@
 <html>
 <head>
   <title>Test</title>
+  <style>
+    ne14-pop {
+      font-family: 'Courier New', Courier, monospace;
+    }
+  </style>
   <script src="../dist/ne14_pop.umd.min.js"></script>
   <script>(function () {
 
@@ -12,28 +17,30 @@
 
       /* 
         Supported Events:
-          open
-          close
+          open, close
+          confirmaccept, confirmreject
+          dismissaccept, dismissreject
+        Supported Methods:
+          open(), close(), wrap()
+          confirm(), dismiss()
+        Supported Properties:
+          *title: string [get|set] - Sets the popup title (dynamically)
+          confirmText: string [get|set] - Sets confirm button (dynamically)
+          dismissText: string [get|set] - Sets dismiss button (dynamically)
+          confirmCallback
+          dismissCallback
       */
       popup.addEventListener('close', () => console.log('close'));
       popup.addEventListener('open', () => console.log('open'));
+      popup.addEventListener('confirmaccept', () => console.log('confirmaccept'));
+      popup.addEventListener('confirmreject', () => console.log('confirmreject'));
+      popup.addEventListener('dismissaccept', () => console.log('dismissaccept'));
+      popup.addEventListener('dismissreject', () => console.log('dismissreject'));
 
+      popup.confirmCallback = () => Math.floor(Math.random() * 100) % 2 === 0;
+      //popup.dismissCallback = () => Math.floor(Math.random() * 100) % 2 === 0;
+      
       button.addEventListener('click', function() {
-
-        /*
-          Supported Methods:
-            open()
-            close()
-            wrap()
-            confirm()
-            dismiss()
-        */
-       /*
-          Supported Properties:
-            *title: string [get|set] - Sets the popup title (dynamically)
-            confirmText: string [get|set] - Sets confirm button (dynamically)
-            dismissText: string [get|set] - Sets dismiss button (dynamically)
-        */
         popup.open();
       });
     });
@@ -52,7 +59,7 @@
       confirmCallback - If returns === false, prevents popup close on confirm
       dismissCallback - If returns === false, prevents popup close on dismiss
     -->
-  <ne14-pop title="woot-title!" dismiss-text>
+  <ne14-pop title="woot-title!" dismiss-text confirm-text>
     <p>Some text-here</p>
   </ne14-pop>
 </body>

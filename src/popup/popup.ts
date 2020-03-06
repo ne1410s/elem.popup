@@ -16,15 +16,21 @@ export class Popup extends CustomElementBase {
     'borderBottomLeftRadius',
   ];
   private _styles: Record<string, string> = {};
+  public confirmCallback: () => boolean;
+  public dismissCallback: () => boolean;
 
   constructor() {
     super(stylesUrl, markupUrl);
     
     const backing = this.root.querySelector('.back');
-    const fore = this.root.querySelector('.fore');
+    const fore = backing.querySelector('.fore');
+    const confirm = fore.querySelector('.confirm');
+    const dismiss = fore.querySelector('.dismiss');
 
     fore.addEventListener('click', event => event.stopPropagation());
-    backing.addEventListener('click', () => this.close());
+    backing.addEventListener('click', () => this.dismiss());
+    confirm.addEventListener('click', () => this.confirm());
+    dismiss.addEventListener('click', () => this.dismiss());
   }
 
   public get confirmText(): string { return this.getAttribute('confirm-text'); }
@@ -39,19 +45,33 @@ export class Popup extends CustomElementBase {
     else this.setAttribute('dismiss-text', value);
   }
 
-  close() {
+  close(): void {
     this.removeAttribute('open');
   }
 
-  open() {
+  open(): void {
     this.setAttribute('open', '');
   }
 
-  wrap(selectorOrElem: string | Element) {
+  wrap(selectorOrElem: string | Element): void {
     const target = typeof (selectorOrElem as Element).append === 'function' 
       ? selectorOrElem as Element
       : document.querySelector(selectorOrElem + '');
     this.appendChild(target);
+  }
+
+  confirm(): void {
+    const doCheck = !!this.confirmCallback;
+    const proceed = !doCheck || this.confirmCallback();
+    if (doCheck) this.fire(proceed ? 'confirmaccept' : 'confirmreject');
+    if (proceed) this.close();
+  }
+
+  dismiss(): void {
+    const doCheck = !!this.dismissCallback;
+    const proceed = !doCheck || this.dismissCallback();
+    if (doCheck) this.fire(proceed ? 'dismissaccept' : 'dismissreject');
+    if (proceed) this.close();
   }
 
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
@@ -77,7 +97,7 @@ export class Popup extends CustomElementBase {
           this.removeAttribute('title');          
         } else if (oldValue !== '__clearme__') {
           this.root.querySelector('.title').innerHTML = newValue;
-          if (!newValue) this.setAttribute('title', '__clearme__');
+          this.setAttribute('title', '__clearme__');
         }
         break;
       case 'confirm-text':
