@@ -18,22 +18,3 @@
   transform: translate(-50%, -100vh);
   transition: transform .3s;
 }
-.body { padding: .5em; }
-.title:empty, .confirm:empty, .dismiss:empty { display: none; }
-.title {
-  padding: .5em .5em 0;
-  display: block;
-  background: gainsboro; 
-}
-.buttons {
-  padding-top: .5em;
-}
-.confirm { background-color: rgb(11, 143, 18); }
-.dismiss { background-color: rgb(143, 10, 17); }
-button {
-  cursor: pointer;
-  font-weight: bold;
-  color: #fff;
-  font: inherit;
-  border: 0;
-}

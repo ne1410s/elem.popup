@@ -5,44 +5,47 @@ import stylesUrl from './popup.css';
 
 export class Popup extends CustomElementBase {
 
-  public static readonly observedAttributes = ['open', 'style', 'title', 'confirm-text', 'dismiss-text'];
+  public static readonly observedAttributes = ['open', 'style'];
 
   private static readonly STYLE_KEYS = [ 
     'backgroundColor',
-    'borderRadius',
     'borderTopLeftRadius',
     'borderTopRightRadius',
     'borderBottomRightRadius',
     'borderBottomLeftRadius',
   ];
   private _styles: Record<string, string> = {};
+  private _moveData: { backing: boolean, move: boolean };
+
   public confirmCallback: () => boolean;
   public dismissCallback: () => boolean;
 
   constructor() {
     super(stylesUrl, markupUrl);
-    
+
     const backing = this.root.querySelector('.back');
     const fore = backing.querySelector('.fore');
-    const confirm = fore.querySelector('.confirm');
-    const dismiss = fore.querySelector('.dismiss');
 
-    fore.addEventListener('click', event => event.stopPropagation());
-    backing.addEventListener('click', () => this.dismiss());
-    confirm.addEventListener('click', () => this.confirm());
-    dismiss.addEventListener('click', () => this.dismiss());
-  }
+    backing.addEventListener('mousedown', event => {
+      this._moveData = { 
+        backing: event.target === backing,
+        move: event.target === fore,
+      };
+    });
 
-  public get confirmText(): string { return this.getAttribute('confirm-text'); }
-  public set confirmText(value: string) {
-    if (value == null) this.removeAttribute('confirm-text');
-    else this.setAttribute('confirm-text', value);
-  }
+    backing.addEventListener('mousemove', event => {
+      if (this._moveData?.move) {
+        console.log('move-lol');
+      }
+    });
 
-  public get dismissText(): string { return this.getAttribute('dismiss-text'); }
-  public set dismissText(value: string) {
-    if (value == null) this.removeAttribute('dismiss-text');
-    else this.setAttribute('dismiss-text', value);
+    backing.addEventListener('mouseup', event => {
+      if (event.target === backing && this._moveData.backing) {
+        this.dismiss();
+      }
+
+      this._moveData = null;
+    });
   }
 
   close(): void {
@@ -92,22 +95,6 @@ export class Popup extends CustomElementBase {
           this.removeAttribute('style');
         }
         break;
-      case 'title':
-        if (newValue === '__clearme__') {
-          this.removeAttribute('title');          
-        } else if (oldValue !== '__clearme__') {
-          this.root.querySelector('.title').innerHTML = newValue;
-          this.setAttribute('title', '__clearme__');
-        }
-        break;
-      case 'confirm-text':
-        const confirmText = newValue == null ? '' : newValue || 'OK';
-        this.root.querySelector('button.confirm').innerHTML = confirmText;
-        break;  
-      case 'dismiss-text':
-        const dismissText = newValue == null ? '' : newValue || 'Cancel';
-        this.root.querySelector('button.dismiss').innerHTML = dismissText;
-        break;
     }
   }
 
@@ -124,14 +111,13 @@ export class Popup extends CustomElementBase {
 
     // Fore
     const fore = backing.querySelector('.fore') as HTMLElement;
-    ['borderRadius'].forEach(prop => {
+    [
+      'borderTopLeftRadius',
+      'borderTopRightRadius',
+      'borderBottomRightRadius',
+      'borderBottomLeftRadius'
+    ].forEach(prop => {
       (fore.style as any)[prop] = this._styles[prop];
-    });
-
-    // Title
-    const title = backing.querySelector('.title') as HTMLElement;
-    ['borderTopLeftRadius', 'borderTopRightRadius'].forEach(prop => {
-      (title.style as any)[prop] = this._styles[prop];
     });
   }
 

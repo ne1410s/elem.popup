@@ -3,9 +3,8 @@
 <head>
   <title>Test</title>
   <style>
-    ne14-pop {
-      font-family: 'Courier New', Courier, monospace;
-    }
+    ne14-pop { font-family: monospace; }
+    ne14-pop p { margin: 2em; }
   </style>
   <script src="../dist/ne14_pop.umd.min.js"></script>
   <script>(function () {
@@ -24,11 +23,8 @@
           open(), close(), wrap()
           confirm(), dismiss()
         Supported Properties:
-          *title: string [get|set] - Sets the popup title (dynamically)
-          confirmText: string [get|set] - Sets confirm button (dynamically)
-          dismissText: string [get|set] - Sets dismiss button (dynamically)
-          confirmCallback
-          dismissCallback
+          confirmCallback - If returns === false, prevents popup close on confirm
+          dismissCallback - If returns === false, prevents popup close on dismiss
       */
       popup.addEventListener('close', () => console.log('close'));
       popup.addEventListener('open', () => console.log('open'));
@@ -37,8 +33,8 @@
       popup.addEventListener('dismissaccept', () => console.log('dismissaccept'));
       popup.addEventListener('dismissreject', () => console.log('dismissreject'));
 
-      popup.confirmCallback = () => Math.floor(Math.random() * 100) % 2 === 0;
-      //popup.dismissCallback = () => Math.floor(Math.random() * 100) % 2 === 0;
+      popup.confirmCallback = () => true;
+      popup.dismissCallback = () => true;
       
       button.addEventListener('click', function() {
         popup.open();
@@ -53,14 +49,12 @@
   <!-- 
     Supported Attributes: 
       *style - Some (inline) styles are injected: border-radius, background-color
-      *title - Used as the popup title, if specified
-      confirm-text - If provided, a confirm button is added (value or 'OK')
-      dismiss-text - If provided, a dismiss button is added (value or 'Cancel')
-      confirmCallback - If returns === false, prevents popup close on confirm
-      dismissCallback - If returns === false, prevents popup close on dismiss
-    -->
-  <ne14-pop title="woot-title!" dismiss-text confirm-text>
+      move - If provided, the dialog can be moved
+      resize - If provided, the dialog can be resized
+  -->
+  <ne14-pop move>
     <p>Some text-here</p>
+    <p>Ra</p>
   </ne14-pop>
 </body>
 </html>
