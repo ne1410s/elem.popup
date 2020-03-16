@@ -27,29 +27,30 @@ export class Popup extends CustomElementBase {
     const back = this.root.querySelector('.back') as HTMLElement;
     const fore = back.querySelector('.fore') as HTMLElement;
 
+    this.resetOffscreenPosition(fore);
+
     back.addEventListener('mousedown', event => {  
       this._drag = event.target === back ? 'back' 
           : event.target === fore ? 'fore'
           : 'fore*';
     });
 
-    back.addEventListener('mousemove', (event: MouseEvent) => {
+    window.addEventListener('mousemove', (event: MouseEvent) => {
       if (this._drag === 'fore' && this._coords) {
-        const pos = { x: event.pageX, y: event.pageY };
-        pos.x = Math.min(pos.x, (window.innerWidth - fore.clientWidth / 2));
-        pos.y = Math.min(pos.y, (window.innerHeight - fore.clientHeight / 2));
-        pos.x = Math.max(0, pos.x);
-        pos.y = Math.max(0, pos.y);
-        const xlate = `translate(${pos.x - this._coords.x}px, ${pos.y - this._coords.y}px)`;
-        fore.style.transform = `translate(-50%, -50%) ${xlate}`;
+   
+        const x_pc = 100 * Math.max(0, event.pageX) / window.innerWidth;
+        const y_pc = 100 * Math.max(0, event.pageY) / window.innerHeight;
+        const x_css = `min(calc(100vw - 100%), ${x_pc.toFixed(2)}vw)`;
+        const y_css = `min(calc(100vh - 100%), ${y_pc.toFixed(2)}vh)`;
+        
+        fore.style.top = fore.style.left = '0';
+        fore.style.transform = `translate(${x_css}, ${y_css})`;
       }
     });
 
+    window.addEventListener('mouseup', () => this._drag = null);
     back.addEventListener('mouseup', event => {
-      if (this._drag === 'back' && event.target === back) {
-        this.dismiss();
-      }
-
+      if (this._drag === 'back' && event.target === back) this.dismiss();
       this._drag = null;
     });
 
@@ -57,10 +58,12 @@ export class Popup extends CustomElementBase {
       if (event.propertyName === 'transform') {
         if (back.classList.contains('open')) {
           fore.classList.add('ready');
-          this._coords = { x: fore.offsetLeft, y: fore.offsetTop };
-        } else {
-          fore.style.transform = 'translate(-50%, -100vh)';
-        }
+          this._coords = { 
+            x: fore.offsetLeft / window.innerWidth,
+            y: fore.offsetTop / window.innerHeight
+          };
+        } 
+        else this.resetOffscreenPosition(fore);
       }
     });
   }
@@ -120,6 +123,12 @@ export class Popup extends CustomElementBase {
 
   connectedCallback() {}
   disconnectedCallback() {}
+
+  private resetOffscreenPosition(fore: HTMLElement): void {
+    fore.style.left = '50%';
+    fore.style.top = '50%';
+    fore.style.transform = 'translate(-50%, -100vh)';
+  }
 
   /** Some relevant style properties are propagated */
   private propagateSupportedStyles(backing: HTMLElement) {
