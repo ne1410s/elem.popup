@@ -8,7 +8,7 @@
 }
 .back:not(.open) { pointer-events: none; }
 .back.open { opacity: 1; }
-.back.open .fore { transform: translate(-50%, -50%); }
+.back.open .fore.ready { transition: none; }
 .fore {
   background-color: #fff;
   min-width: 1rem;

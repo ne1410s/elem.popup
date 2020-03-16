@@ -15,7 +15,8 @@ export class Popup extends CustomElementBase {
     'borderBottomLeftRadius',
   ];
   private _styles: Record<string, string> = {};
-  private _moveData: { backing: boolean, move: boolean };
+  private _coords: { x: number, y: number };
+  private _drag: 'back' | 'fore' | 'fore*';
 
   public confirmCallback: () => boolean;
   public dismissCallback: () => boolean;
@@ -23,28 +24,44 @@ export class Popup extends CustomElementBase {
   constructor() {
     super(stylesUrl, markupUrl);
 
-    const backing = this.root.querySelector('.back');
-    const fore = backing.querySelector('.fore');
+    const back = this.root.querySelector('.back') as HTMLElement;
+    const fore = back.querySelector('.fore') as HTMLElement;
 
-    backing.addEventListener('mousedown', event => {
-      this._moveData = { 
-        backing: event.target === backing,
-        move: event.target === fore,
-      };
+    back.addEventListener('mousedown', event => {  
+      this._drag = event.target === back ? 'back' 
+          : event.target === fore ? 'fore'
+          : 'fore*';
     });
 
-    backing.addEventListener('mousemove', event => {
-      if (this._moveData?.move) {
-        console.log('move-lol');
+    back.addEventListener('mousemove', (event: MouseEvent) => {
+      if (this._drag === 'fore' && this._coords) {
+        const pos = { x: event.pageX, y: event.pageY };
+        pos.x = Math.min(pos.x, (window.innerWidth - fore.clientWidth / 2));
+        pos.y = Math.min(pos.y, (window.innerHeight - fore.clientHeight / 2));
+        pos.x = Math.max(0, pos.x);
+        pos.y = Math.max(0, pos.y);
+        const xlate = `translate(${pos.x - this._coords.x}px, ${pos.y - this._coords.y}px)`;
+        fore.style.transform = `translate(-50%, -50%) ${xlate}`;
       }
     });
 
-    backing.addEventListener('mouseup', event => {
-      if (event.target === backing && this._moveData.backing) {
+    back.addEventListener('mouseup', event => {
+      if (this._drag === 'back' && event.target === back) {
         this.dismiss();
       }
 
-      this._moveData = null;
+      this._drag = null;
+    });
+
+    fore.addEventListener('transitionend', (event: TransitionEvent) => {
+      if (event.propertyName === 'transform') {
+        if (back.classList.contains('open')) {
+          fore.classList.add('ready');
+          this._coords = { x: fore.offsetLeft, y: fore.offsetTop };
+        } else {
+          fore.style.transform = 'translate(-50%, -100vh)';
+        }
+      }
     });
   }
 
@@ -80,10 +97,13 @@ export class Popup extends CustomElementBase {
   attributeChangedCallback(name: string, oldValue: string, newValue: string) {
     switch (name) {
       case 'open':
-        const backing = this.root.querySelector('.back');
+        const back = this.root.querySelector('.back');
+        const fore = back.querySelector('.fore') as HTMLElement;
         const doOpen = !!newValue || typeof newValue === 'string';
-        if (doOpen) this.propagateSupportedStyles(backing as HTMLElement);
-        backing.classList.toggle('open', doOpen);
+        fore.classList.remove('ready');
+        fore.style.transform = doOpen ? 'translate(-50%, -50%)' : fore.style.transform + ' translateY(-100vh)';
+        back.classList.toggle('open', doOpen); 
+        if (doOpen) this.propagateSupportedStyles(back as HTMLElement);
         this.fire(doOpen ? 'open' : 'close');
         break;
       case 'style':
