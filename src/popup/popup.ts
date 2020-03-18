@@ -19,6 +19,7 @@ export class Popup extends CustomElementBase {
   private _coords: { x: number, y: number };
   private _drag: 'back' | 'fore' | 'fore*';
   private get canMove() { return this.hasAttribute('move'); }
+  private get canResize() { return this.hasAttribute('resize'); }
   
   public confirmCallback: () => boolean;
   public dismissCallback: () => boolean;
@@ -40,7 +41,7 @@ export class Popup extends CustomElementBase {
       fore.classList.toggle('moving', this.canMove && this._drag === 'fore');
     });
     
-    fore.addEventListener('mouseover', event => fore.classList.toggle('over', this.canMove && event.target === fore));
+    fore.addEventListener('mouseover', event => fore.classList.toggle('over', (this.canMove || this.canResize) && event.target === fore));
     fore.addEventListener('mouseout', () => fore.classList.remove('over'));
 
     window.addEventListener('mousemove', (event: MouseEvent) => {
@@ -111,7 +112,8 @@ export class Popup extends CustomElementBase {
         const doOpen = !!newValue || typeof newValue === 'string';
         fore.classList.remove('ready', 'moving');
         fore.style.transform = doOpen ? 'translate(-50%, -50%)' : fore.style.transform + ' translateY(-100vh)';
-        back.classList.toggle('open', doOpen); 
+        fore.classList.toggle('resize', this.canResize);
+        back.classList.toggle('open', doOpen);
         if (doOpen) this.propagateSupportedStyles(back as HTMLElement);
         this.fire(doOpen ? 'open' : 'close');
         break;
@@ -127,7 +129,14 @@ export class Popup extends CustomElementBase {
     }
   }
 
-  connectedCallback() {}
+  connectedCallback() {
+    const back = this.root.querySelector('.back');
+    const fore = back.querySelector('.fore');
+    if (back.classList.contains('open')) {
+      fore.classList.add('ready');
+    }
+  }
+
   disconnectedCallback() {}
 
   private resetOffscreenPosition(fore: HTMLElement): void {
