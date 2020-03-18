@@ -37,7 +37,7 @@ export class Popup extends CustomElementBase {
           : 'fore*';
       this._coords = this._drag !== 'fore' ? null 
           : { x: event.offsetX, y: event.offsetY };
-      fore.classList.toggle('moving', this._drag === 'fore');
+      fore.classList.toggle('moving', this.canMove && this._drag === 'fore');
     });
     
     fore.addEventListener('mouseover', event => fore.classList.toggle('over', this.canMove && event.target === fore));
