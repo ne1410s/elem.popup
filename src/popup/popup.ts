@@ -13,11 +13,13 @@ export class Popup extends CustomElementBase {
     'borderTopRightRadius',
     'borderBottomRightRadius',
     'borderBottomLeftRadius',
+    'boxShadow',
   ];
   private _styles: Record<string, string> = {};
   private _coords: { x: number, y: number };
   private _drag: 'back' | 'fore' | 'fore*';
-
+  private get canMove() { return this.hasAttribute('move'); }
+  
   public confirmCallback: () => boolean;
   public dismissCallback: () => boolean;
 
@@ -33,35 +35,39 @@ export class Popup extends CustomElementBase {
       this._drag = event.target === back ? 'back' 
           : event.target === fore ? 'fore'
           : 'fore*';
+      this._coords = this._drag !== 'fore' ? null 
+          : { x: event.offsetX, y: event.offsetY };
+      fore.classList.toggle('moving', this._drag === 'fore');
     });
+    
+    fore.addEventListener('mouseover', event => fore.classList.toggle('over', this.canMove && event.target === fore));
+    fore.addEventListener('mouseout', () => fore.classList.remove('over'));
 
     window.addEventListener('mousemove', (event: MouseEvent) => {
-      if (this._drag === 'fore' && this._coords) {
-   
-        const x_pc = 100 * Math.max(0, event.pageX) / window.innerWidth;
-        const y_pc = 100 * Math.max(0, event.pageY) / window.innerHeight;
-        const x_css = `min(calc(100vw - 100%), ${x_pc.toFixed(2)}vw)`;
-        const y_css = `min(calc(100vh - 100%), ${y_pc.toFixed(2)}vh)`;
-        
+      if (this.canMove && this._drag === 'fore' && this._coords) {
+        const x_pc = 100 * Math.max(0, event.pageX - this._coords.x) / window.innerWidth;
+        const y_pc = 100 * Math.max(0, event.pageY - this._coords.y) / window.innerHeight;
+        const x_css = `min(100vw - 100%, ${x_pc.toFixed(2)}vw)`;
+        const y_css = `min(100vh - 100%, ${y_pc.toFixed(2)}vh)`;     
         fore.style.top = fore.style.left = '0';
         fore.style.transform = `translate(${x_css}, ${y_css})`;
       }
     });
 
-    window.addEventListener('mouseup', () => this._drag = null);
+    window.addEventListener('mouseup', () => {
+      this._drag = null;
+      fore.classList.remove('moving');
+    });
     back.addEventListener('mouseup', event => {
       if (this._drag === 'back' && event.target === back) this.dismiss();
       this._drag = null;
+      fore.classList.remove('moving');
     });
 
     fore.addEventListener('transitionend', (event: TransitionEvent) => {
       if (event.propertyName === 'transform') {
         if (back.classList.contains('open')) {
           fore.classList.add('ready');
-          this._coords = { 
-            x: fore.offsetLeft / window.innerWidth,
-            y: fore.offsetTop / window.innerHeight
-          };
         } 
         else this.resetOffscreenPosition(fore);
       }
@@ -103,7 +109,7 @@ export class Popup extends CustomElementBase {
         const back = this.root.querySelector('.back');
         const fore = back.querySelector('.fore') as HTMLElement;
         const doOpen = !!newValue || typeof newValue === 'string';
-        fore.classList.remove('ready');
+        fore.classList.remove('ready', 'moving');
         fore.style.transform = doOpen ? 'translate(-50%, -50%)' : fore.style.transform + ' translateY(-100vh)';
         back.classList.toggle('open', doOpen); 
         if (doOpen) this.propagateSupportedStyles(back as HTMLElement);
@@ -144,7 +150,8 @@ export class Popup extends CustomElementBase {
       'borderTopLeftRadius',
       'borderTopRightRadius',
       'borderBottomRightRadius',
-      'borderBottomLeftRadius'
+      'borderBottomLeftRadius',
+      'boxShadow',
     ].forEach(prop => {
       (fore.style as any)[prop] = this._styles[prop];
     });
