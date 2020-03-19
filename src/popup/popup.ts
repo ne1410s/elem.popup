@@ -52,9 +52,9 @@ export class Popup extends CustomElementBase {
 
     window.addEventListener('mousemove', (event: MouseEvent) => {
       if (fore.classList.contains('resizing')) {
-        console.warn('TODO: Tracking not quite right.. And support for move > then resize!');
-        fore.style.width = event.pageX - fore.offsetLeft + 'px';
-        fore.style.height = event.pageY - fore.offsetTop + 'px';
+        console.warn('TODO: Add support for move > then resize!');
+        fore.style.width = (fore.offsetWidth / 2) + event.pageX - fore.offsetLeft + 'px';
+        fore.style.height = (fore.offsetHeight / 2) + event.pageY - fore.offsetTop + 'px';
       }
       else if (this.canMove && this._drag === 'fore' && this._coords) {
         const x_pc = 100 * Math.max(0, event.pageX - this._coords.x) / window.innerWidth;
