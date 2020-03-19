@@ -29,8 +29,14 @@ export class Popup extends CustomElementBase {
 
     const back = this.root.querySelector('.back') as HTMLElement;
     const fore = back.querySelector('.fore') as HTMLElement;
+    const resizer = fore.querySelector('.se-resize');
 
     this.resetOffscreenPosition(fore);
+
+    resizer.addEventListener('mousedown', () => {
+      fore.classList.toggle('over', this.canResize);
+      fore.classList.toggle('resizing', this.canResize);
+    });
 
     back.addEventListener('mousedown', event => {  
       this._drag = event.target === back ? 'back' 
@@ -41,11 +47,16 @@ export class Popup extends CustomElementBase {
       fore.classList.toggle('moving', this.canMove && this._drag === 'fore');
     });
     
-    fore.addEventListener('mouseover', event => fore.classList.toggle('over', (this.canMove || this.canResize) && event.target === fore));
+    fore.addEventListener('mouseover', event => fore.classList.toggle('over', this.canMove && event.target === fore));
     fore.addEventListener('mouseout', () => fore.classList.remove('over'));
 
     window.addEventListener('mousemove', (event: MouseEvent) => {
-      if (this.canMove && this._drag === 'fore' && this._coords) {
+      if (fore.classList.contains('resizing')) {
+        console.warn('TODO: Tracking not quite right.. And support for move > then resize!');
+        fore.style.width = event.pageX - fore.offsetLeft + 'px';
+        fore.style.height = event.pageY - fore.offsetTop + 'px';
+      }
+      else if (this.canMove && this._drag === 'fore' && this._coords) {
         const x_pc = 100 * Math.max(0, event.pageX - this._coords.x) / window.innerWidth;
         const y_pc = 100 * Math.max(0, event.pageY - this._coords.y) / window.innerHeight;
         const x_css = `min(100vw - 100%, ${x_pc.toFixed(2)}vw)`;
@@ -57,12 +68,12 @@ export class Popup extends CustomElementBase {
 
     window.addEventListener('mouseup', () => {
       this._drag = null;
-      fore.classList.remove('moving');
+      fore.classList.remove('moving', 'resizing');
     });
     back.addEventListener('mouseup', event => {
       if (this._drag === 'back' && event.target === back) this.dismiss();
       this._drag = null;
-      fore.classList.remove('moving');
+      fore.classList.remove('moving', 'resizing');
     });
 
     fore.addEventListener('transitionend', (event: TransitionEvent) => {
@@ -143,6 +154,8 @@ export class Popup extends CustomElementBase {
     fore.style.left = '50%';
     fore.style.top = '50%';
     fore.style.transform = 'translate(-50%, -100vh)';
+    fore.style.width = '';
+    fore.style.height = '';
   }
 
   /** Some relevant style properties are propagated */
