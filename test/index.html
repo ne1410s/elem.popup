@@ -8,56 +8,18 @@
   </style>
   <script src="../dist/ne14_pop.umd.min.js"></script>
   <script>(function () {
-
     window.addEventListener('load', function() {
-
       var button = document.getElementsByTagName('button')[0];
-      var popup = document.getElementsByTagName('ne14-pop')[0];
-
-      /* 
-        Supported Events:
-          open, close
-          confirmaccept, confirmreject
-          dismissaccept, dismissreject
-        Supported Methods:
-          open(), close(), wrap()
-          confirm(), dismiss()
-        Supported Properties:
-          confirmCallback - If returns === false, prevents popup close on confirm
-          dismissCallback - If returns === false, prevents popup close on dismiss
-      */
-      popup.addEventListener('close', () => console.log('close'));
-      popup.addEventListener('open', () => console.log('open'));
-      popup.addEventListener('confirmaccept', () => console.log('confirmaccept'));
-      popup.addEventListener('confirmreject', () => console.log('confirmreject'));
-      popup.addEventListener('dismissaccept', () => console.log('dismissaccept'));
-      popup.addEventListener('dismissreject', () => console.log('dismissreject'));
-
-      popup.confirmCallback = () => true;
-      popup.dismissCallback = () => true;
-      
+      var popup = document.getElementsByTagName('ne14-pop')[0];      
       button.addEventListener('click', function() {
         popup.open();
       });
     });
-
   })();</script>
 </head>
 <body>
   <h1>Lorem Ipsum</h1>
   <button>Open</button>
-  <!-- 
-    Supported Attributes: 
-      *style - Some (inline) styles are injected: 
-        background-color,
-        border-radius,
-        box-shadow,
-
-      move - If provided, the dialog can be moved
-      resize - If provided, the dialog can be resized
-      open - If provided, the dialog will open immediately
-      no-close - If provided, the close icon is hidden and max size is capped
-  -->
   <ne14-pop move resize>
     <p>Some text-here</p>
     <p>Ra</p>
