@@ -20,7 +20,8 @@ export class Popup extends CustomElementBase {
   private _drag: 'back' | 'fore' | 'fore*';
   private get canMove() { return this.hasAttribute('move'); }
   private get canResize() { return this.hasAttribute('resize'); }
-  
+  private get canClose() { return !this.hasAttribute('no-close'); }
+
   public confirmCallback: () => boolean;
   public dismissCallback: () => boolean;
 
@@ -30,9 +31,11 @@ export class Popup extends CustomElementBase {
     const back = this.root.querySelector('.back') as HTMLElement;
     const fore = back.querySelector('.fore') as HTMLElement;
     const resizer = fore.querySelector('.se-resize');
+    const closer = fore.querySelector('.close');
 
     this.resetOffscreenPosition(fore);
 
+    closer.addEventListener('click', () => this.close());
     resizer.addEventListener('mousedown', () => {
       fore.classList.toggle('over', this.canResize);
       fore.classList.toggle('resizing', this.canResize);
@@ -125,6 +128,7 @@ export class Popup extends CustomElementBase {
         fore.classList.remove('ready', 'moving');
         fore.style.transform = doOpen ? 'translate(-50%, -50%)' : fore.style.transform + ' translateY(-100vh)';
         fore.classList.toggle('resize', this.canResize);
+        fore.classList.toggle('no-close', !this.canClose);
         back.classList.toggle('open', doOpen);
         if (doOpen) this.propagateSupportedStyles(back as HTMLElement);
         this.fire(doOpen ? 'open' : 'close');
