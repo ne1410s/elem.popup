@@ -31,4 +31,4 @@
 .fore.no-close .close { display: none; }
 .fore .close { cursor: pointer; top: -6px; right: 0; padding: .2em; }
 .fore:not(.resize) .se-resize { display: none; }
-.fore .se-resize { cursor: se-resize; bottom: -6px; right: -2px; }
+.fore .se-resize { cursor: se-resize; bottom: -9px; right: -4px; }
