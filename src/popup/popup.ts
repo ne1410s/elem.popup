@@ -54,17 +54,21 @@ export class Popup extends CustomElementBase {
     fore.addEventListener('mouseout', () => fore.classList.remove('over'));
 
     window.addEventListener('mousemove', (event: MouseEvent) => {
+      const rect = fore.getBoundingClientRect();
       if (fore.classList.contains('resizing')) {
-        const rect = fore.getBoundingClientRect();
         const adjust = 5;
         fore.style.width = adjust + event.pageX - rect.x + 'px';
         fore.style.height = adjust + event.pageY - rect.y + 'px';
       }
       else if (this.canMove && this._drag === 'fore' && this._coords) {
-        const x_pc = 100 * Math.max(0, event.pageX - this._coords.x) / window.innerWidth;
-        const y_pc = 100 * Math.max(0, event.pageY - this._coords.y) / window.innerHeight;
-        const x_css = `min(100vw - 100%, ${x_pc.toFixed(2)}vw)`;
-        const y_css = `min(100vh - 100%, ${y_pc.toFixed(2)}vh)`;     
+        const backRect = back.getBoundingClientRect();
+        const deltaW = backRect.width - window.innerWidth;
+        const deltaH = backRect.height - window.innerHeight;
+        const x_min_pc = 100 * Math.max(0, event.pageX - this._coords.x) / window.innerWidth;
+        const y_min_pc = 100 * Math.max(0, event.pageY - this._coords.y) / window.innerHeight;
+        const x_css = `min(${x_min_pc.toFixed(2)}vw, ${deltaW}px + 100vw - 100%)`;
+        const y_css = `min(${y_min_pc.toFixed(2)}vh, ${deltaH}px + 100vh - 100%)`;
+
         fore.style.top = fore.style.left = '0';
         fore.style.transform = `translate(${x_css}, ${y_css})`;
       }
