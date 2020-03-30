@@ -20,6 +20,7 @@ export class Popup extends CustomElementBase {
   private _drag: 'back' | 'fore' | 'fore*';
   private get canMove() { return this.hasAttribute('move'); }
   private get canResize() { return this.hasAttribute('resize'); }
+  private get canShrink() { return this.canResize && this.hasAttribute('shrink'); }
   private get canClose() { return !this.hasAttribute('no-close'); }
 
   public confirmCallback: () => boolean;
@@ -135,6 +136,11 @@ export class Popup extends CustomElementBase {
         fore.classList.toggle('no-close', !this.canClose);
         back.classList.toggle('open', doOpen);
         if (doOpen) this.propagateSupportedStyles(back as HTMLElement);
+        if (!this.canShrink) {
+          const rect = fore.getBoundingClientRect();
+          fore.style.minWidth = rect.width + 'px';
+          fore.style.minHeight = rect.height + 'px';
+        }       
         this.fire(doOpen ? 'open' : 'close');
         break;
       case 'style':
@@ -163,8 +169,8 @@ export class Popup extends CustomElementBase {
     fore.style.left = '50%';
     fore.style.top = '50%';
     fore.style.transform = 'translate(-50%, -100vh)';
-    fore.style.width = '';
-    fore.style.height = '';
+    fore.style.minWidth = fore.style.width = '';
+    fore.style.minHeight = fore.style.height = '';
   }
 
   /** Some relevant style properties are propagated */

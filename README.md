@@ -13,6 +13,7 @@
 ```
 - **move**: User can drag the popup around
 - **resize**: User can alter the size of the popup
+- **shrink**: (Requires ***resize***: User can reduce size below that initially presented)
 - **open**: The popup is opened immediately
 - **no-close**: The close icon is not made available
 - **style**: If supplied inline, the following styles are propagated to the element. They are fairly self-explanatory
