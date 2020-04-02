@@ -37,9 +37,16 @@ export class Popup extends CustomElementBase {
     this.resetOffscreenPosition(fore);
 
     closer.addEventListener('click', () => this.close());
+    
     resizer.addEventListener('mousedown', () => {
       fore.classList.toggle('over', this.canResize);
       fore.classList.toggle('resizing', this.canResize);
+
+      if (!this.canShrink && !fore.style.minWidth) {
+        const rect = fore.getBoundingClientRect();
+        fore.style.minWidth = rect.width + 'px';
+        fore.style.minHeight = rect.height + 'px';
+      }
     });
 
     back.addEventListener('mousedown', event => {  
@@ -136,8 +143,9 @@ export class Popup extends CustomElementBase {
         fore.classList.toggle('no-close', !this.canClose);
         back.classList.toggle('open', doOpen);
         if (doOpen) {
+          fore.style.minWidth = fore.style.width = '';
+          fore.style.minHeight = fore.style.height = '';
           this.propagateSupportedStyles(back as HTMLElement);
-          if (!this.canShrink) this.fixMinSize();
         }
         this.fire(doOpen ? 'open' : 'close');
         break;
@@ -159,15 +167,6 @@ export class Popup extends CustomElementBase {
     if (back.classList.contains('open')) {
       fore.classList.add('ready');
     }
-  }
-
-  protected fixMinSize() {
-    const fore = this.root.querySelector('.fore') as HTMLElement;
-    fore.style.minWidth = fore.style.width = '';
-    fore.style.minHeight = fore.style.height = '';
-    const rect = fore.getBoundingClientRect();
-    fore.style.minWidth = rect.width + 'px';
-    fore.style.minHeight = rect.height + 'px';
   }
 
   private resetOffscreenPosition(fore: HTMLElement): void {
