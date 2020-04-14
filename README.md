@@ -1,4 +1,4 @@
-# ne14.popup
+# @ne1410s/popup
 ## A lightweight & configurable modal popup.
 ```html
 <ne14-pop>
