@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ne1410s/ne14.popup.git"
+    "url": "git+https://github.com/ne1410s/elem.popup.git"
   },
   "keywords": [
     "Lightweight",
@@ -31,14 +31,13 @@
   "author": "ne1410s <pgj646@gmail.com> (http://ne1410s.co.uk)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ne1410s/ne14.popup/issues"
+    "url": "https://github.com/ne1410s/elem.popup/issues"
   },
-  "homepage": "https://github.com/ne1410s/ne14.popup#readme",
+  "homepage": "https://github.com/ne1410s/elem.popup#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.1.0",
     "@rollup/plugin-json": "^4.0.2",
     "@rollup/plugin-node-resolve": "^7.1.3",
-    "@rollup/plugin-typescript": "^4.1.1",
     "@rollup/plugin-url": "^4.0.2",
     "rimraf": "^3.0.1",
     "rollup": "^2.6.1",
@@ -47,6 +46,6 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "@ne1410s/cust-elems": "^0.1.0"
+    "@ne1410s/cust-elems": "^0.1.1"
   }
 }

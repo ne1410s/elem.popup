@@ -196,7 +196,7 @@ export class Popup extends CustomElementBase {
     });
   }
 
-  /** Emits an event from the specified node. */
+  /** Emits a new event. */
   private fire<T>(event: string, detail?: T) {
     this.dispatchEvent(new CustomEvent(event, { detail }));
   }
