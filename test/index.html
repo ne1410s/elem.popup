@@ -1,28 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
-  <title>Test</title>
-  <style>
-    ne14-pop { font-family: monospace; }
-    ne14-pop p { margin: 2em; }
-  </style>
-  <script src="../dist/ne14_pop.umd.min.js"></script>
-  <script>(function () {
-    window.addEventListener('load', function() {
-      var button = document.getElementsByTagName('button')[0];
-      var popup = document.getElementsByTagName('ne14-pop')[0];      
-      button.addEventListener('click', function() {
-        popup.open();
-      });
-    });
-  })();</script>
-</head>
-<body>
-  <h1>Lorem Ipsum</h1>
-  <button>Open</button>
-  <ne14-pop move resize>
-    <p>Some text-here</p>
-    <p>Ra</p>
-  </ne14-pop>
-</body>
+  <head>
+    <title>Test</title>
+    <style>
+      ne14-pop {
+        font-family: monospace;
+      }
+      ne14-pop p {
+        margin: 2em;
+      }
+    </style>
+    <script src="../dist/ne14_pop.umd.min.js"></script>
+    <script>
+      (function () {
+        window.addEventListener('load', function () {
+          var button = document.getElementsByTagName('button')[0];
+          var popup = document.getElementsByTagName('ne14-pop')[0];
+          button.addEventListener('click', function () {
+            popup.open();
+          });
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <h1>Lorem Ipsum</h1>
+    <button>Open</button>
+    <ne14-pop move resize>
+      <p>Some text-here</p>
+      <p>Ra</p>
+    </ne14-pop>
+  </body>
 </html>
