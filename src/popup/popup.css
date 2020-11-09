@@ -4,7 +4,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: rgba(0, 0, 0, 0.85);
+  background: var(--background, rgba(0, 0, 0, 0.85));
   opacity: 0;
   overflow: hidden;
   transition: opacity 0.3s;
@@ -43,6 +43,8 @@
   top: 50%;
   left: 50%;
   transition: transform 0.3s;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
 }
 .fore > span {
   position: absolute;

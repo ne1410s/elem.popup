@@ -56,3 +56,19 @@ pop.addEventListener('open', () => {
 
 - **confirmCallback**: () => boolean: Return false to prevent a call to confirm from closing the popup
 - **dismissCallback**: () => boolean: Return false to prevent a call to dismiss from closing the popup
+
+### CSS Variables
+
+Some degree of custom styling can be provided, by way of css variables:
+
+```css
+ne14-pop {
+  --background: rgba(0, 0, 0, .5);
+  --border-radius: 5px;
+  --box-shadow: 5px 5px 20px black;
+}
+```
+
+- **`--background`** _Background behind the popup. Defaults to: `rgba(0, 0, 0, .85)`_
+- **`--border-radius`** _Border radius for the popup._
+- **`--box-shadow`** _Box shadow for the popup (when stationary)._

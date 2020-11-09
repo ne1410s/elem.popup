@@ -4,16 +4,8 @@ import markupUrl from './popup.html';
 import stylesUrl from './popup.css';
 
 export class Popup extends CustomElementBase {
-  public static readonly observedAttributes = ['open', 'style'];
+  public static readonly observedAttributes = ['open'];
 
-  private static readonly STYLE_KEYS = [
-    'backgroundColor',
-    'borderTopLeftRadius',
-    'borderTopRightRadius',
-    'borderBottomRightRadius',
-    'borderBottomLeftRadius',
-    'boxShadow',
-  ];
   protected get canMove() {
     return this.hasAttribute('move');
   }
@@ -152,17 +144,8 @@ export class Popup extends CustomElementBase {
         if (doOpen) {
           fore.style.minWidth = fore.style.width = '';
           fore.style.minHeight = fore.style.height = '';
-          this.propagateSupportedStyles(back as HTMLElement);
         }
         this.fire(doOpen ? 'open' : 'close');
-        break;
-      case 'style':
-        if (newValue) {
-          Popup.STYLE_KEYS.map((key) => ({ key, value: (this.style as any)[key] }))
-            .filter((kvp) => kvp.value)
-            .forEach((kvp) => (this._styles[kvp.key] = kvp.value));
-          this.removeAttribute('style');
-        }
         break;
     }
   }
@@ -179,26 +162,6 @@ export class Popup extends CustomElementBase {
     fore.style.left = '50%';
     fore.style.top = '50%';
     fore.style.transform = 'translate(-50%, -100vh)';
-  }
-
-  /** Some relevant style properties are propagated */
-  private propagateSupportedStyles(backing: HTMLElement) {
-    // Backing
-    ['backgroundColor'].forEach((prop) => {
-      (backing.style as any)[prop] = this._styles[prop];
-    });
-
-    // Fore
-    const fore = backing.querySelector('.fore') as HTMLElement;
-    [
-      'borderTopLeftRadius',
-      'borderTopRightRadius',
-      'borderBottomRightRadius',
-      'borderBottomLeftRadius',
-      'boxShadow',
-    ].forEach((prop) => {
-      (fore.style as any)[prop] = this._styles[prop];
-    });
   }
 
   /** Emits a new event. */
