@@ -63,7 +63,7 @@ Some degree of custom styling can be provided, by way of css variables:
 
 ```css
 ne14-pop {
-  --background: rgba(0, 0, 0, .5);
+  --background: rgba(0, 0, 0, 0.5);
   --border-radius: 5px;
   --box-shadow: 5px 5px 20px black;
 }
