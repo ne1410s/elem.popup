@@ -1,10 +1,13 @@
-import { CustomElementBase } from '@ne1410s/cust-elems';
+import { CustomElementBase, decode, reduceCss, reduceHtml } from '@ne1410s/cust-elems';
 
 import markupUrl from './popup.html';
 import stylesUrl from './popup.css';
 
 export class Popup extends CustomElementBase {
   public static readonly observedAttributes = ['open'];
+
+  private static readonly Css = reduceCss(decode(stylesUrl));
+  private static readonly Html = reduceHtml(decode(markupUrl));
 
   protected get canMove() {
     return this.hasAttribute('move');
@@ -18,7 +21,6 @@ export class Popup extends CustomElementBase {
   private get canClose() {
     return !this.hasAttribute('no-close');
   }
-  private _styles: Record<string, string> = {};
   private _coords: { x: number; y: number };
   private _drag: 'back' | 'fore' | 'fore*';
 
@@ -26,7 +28,7 @@ export class Popup extends CustomElementBase {
   public dismissCallback: () => boolean;
 
   constructor() {
-    super(stylesUrl, markupUrl);
+    super(Popup.Css, Popup.Html);
 
     const back = this.root.querySelector('.back') as HTMLElement;
     const fore = back.querySelector('.fore') as HTMLElement;
