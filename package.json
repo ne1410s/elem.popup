@@ -1,6 +1,6 @@
 {
   "name": "@ne1410s/popup",
-  "version": "0.2.12",
+  "version": "0.2.13",
   "description": "A lightweight configurable popup.",
   "main": "dist/ne14_pop.cjs.min.js",
   "module": "dist/ne14_pop.esm.min.js",
